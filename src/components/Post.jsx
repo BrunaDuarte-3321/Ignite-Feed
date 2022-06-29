@@ -4,6 +4,7 @@ import { Coment } from './Coment';
 
 import { format, formatDistanceToNow} from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR'
+import { useState } from 'react';
 
 export const Post = ({ name, role, publishedAt, img, content }) => {
 
@@ -16,7 +17,24 @@ export const Post = ({ name, role, publishedAt, img, content }) => {
     addSuffix: true
   })
 
-  
+  const [comments, setComments] = useState([
+    'Post muito bacana, hein?',
+  ])
+
+  const [newCommentText, setNewCommentText] = useState('')
+
+
+  const newCommentChange = (event) => {
+    setNewCommentText(event.target.value);
+  }
+
+  const handleCreateNewComment = (event) => {
+    event.preventDefault()
+    setComments([...comments, newCommentText])
+    setNewCommentText('');
+  }
+
+
 
   return (
     <article className={styles.post}>
@@ -42,9 +60,12 @@ export const Post = ({ name, role, publishedAt, img, content }) => {
 
       </div>
 
-      <form className={styles.comentForm}>
+      <form onSubmit={handleCreateNewComment} className={styles.comentForm}>
         <strong>Deixe seu feedback</strong>
         <textarea
+          name='comment'
+          value={newCommentText}
+          onChange={newCommentChange}
           placeholder='Deixe um comentário'
         />
         <footer>
@@ -53,9 +74,11 @@ export const Post = ({ name, role, publishedAt, img, content }) => {
       </form>
 
       <div className={styles.comentList}>
-        <Coment/>
-        <Coment/>
-        <Coment/>
+        {comments.map((coment) => {
+          return (
+            <Coment content={ coment } />
+          )
+        })}
       </div>
     </article>
 )}
