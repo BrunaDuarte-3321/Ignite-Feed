@@ -1,34 +1,45 @@
 import styles from '../styles/Post.module.css';
 import { Avatar } from './Avatar';
 import { Coment } from './Coment';
-export const Post = ( ) => {
+
+import { format, formatDistanceToNow} from 'date-fns';
+import ptBR from 'date-fns/locale/pt-BR'
+
+export const Post = ({ name, role, publishedAt, img, content }) => {
+
+  const formatoDate = format(publishedAt, "d 'de' LLL 'as' HH:mm'h'", {
+    locale: ptBR,
+  })
+
+  const publishedDateRelativeToNow = formatDistanceToNow(publishedAt, {
+    locale: ptBR,
+    addSuffix: true
+  })
+
+  
+
   return (
     <article className={styles.post}>
       <header>
         <div className={styles.author}>
-          <Avatar  src='https://avatars.githubusercontent.com/u/62619506?v=4'/>
+          <Avatar src={ img} />
           <div className={styles.authorInfo}>
-            <strong>Bruna Duarte</strong>
-            <span>Web Developer</span>
+            <strong>{ name}</strong>
+            <span>{role}</span>
           </div>
         </div>
 
-        <time title='29 de Junho de 2022' dateTime='2202-06-29 08:13:38'>Publicado há uma 1h</time>
+        <time title='29 de Junho de 2022' dateTime={publishedAt.toISOString()}>{publishedDateRelativeToNow}</time>
       </header>
       <div className={styles.content}>
-        <p>
-          Fala galeraa 👋
-        </p>
-        <p>
-          Acabei de subir mais um projeto no meu portifa. É um projeto que fiz no NLW Return, evento da Rocketseat. O nome do projeto é DoctorCare 🚀
+        {content.map((item) => {
+          if (item.type === 'paragraph') {
+            return <p>{ item.content }</p>
+          } else if (item.type === 'link') {
+            return <p><a href="#">{ item.content }</a></p>
+          }
+        })}
 
-         </p>
-        <p>
-           <a href="#">jane.design/doctorcare</a>
-          <a href="#">#novoprojeto </a>{' '}
-          <a href="#">#nlw</a>{'  '}
-          <a href="#">#rocketseat</a>
-        </p>
       </div>
 
       <form className={styles.comentForm}>
