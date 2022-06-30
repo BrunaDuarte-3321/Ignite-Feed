@@ -6,7 +6,7 @@ import { format, formatDistanceToNow} from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR'
 import { useState } from 'react';
 
-export const Post = ({ name, role, publishedAt, img, content }) => {
+export const Post = ({ author, publishedAt, content }) => {
 
   const formatoDate = format(publishedAt, "d 'de' LLL 'as' HH:mm'h'", {
     locale: ptBR,
@@ -40,10 +40,10 @@ export const Post = ({ name, role, publishedAt, img, content }) => {
     <article className={styles.post}>
       <header>
         <div className={styles.author}>
-          <Avatar src={ img} />
+          <Avatar src={author.avatarUrl} />
           <div className={styles.authorInfo}>
-            <strong>{ name}</strong>
-            <span>{role}</span>
+            <strong>{author.name}</strong>
+            <span>{author.role}</span>
           </div>
         </div>
 
@@ -52,9 +52,9 @@ export const Post = ({ name, role, publishedAt, img, content }) => {
       <div className={styles.content}>
         {content.map((item) => {
           if (item.type === 'paragraph') {
-            return <p>{ item.content }</p>
+            return <p key={item.content}>{ item.content }</p>
           } else if (item.type === 'link') {
-            return <p><a href="#">{ item.content }</a></p>
+            return <p key={item.content}><a href="#">{ item.content }</a></p>
           }
         })}
 
@@ -76,7 +76,7 @@ export const Post = ({ name, role, publishedAt, img, content }) => {
       <div className={styles.comentList}>
         {comments.map((coment) => {
           return (
-            <Coment content={ coment } />
+            <Coment key={coment} content={ coment } />
           )
         })}
       </div>
