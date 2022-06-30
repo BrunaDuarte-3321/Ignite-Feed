@@ -4,9 +4,26 @@ import { Coment } from './Coment';
 
 import {formatDistanceToNow} from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR'
-import { useState } from 'react';
+import { useState, FormEvent, ChangeEvent, InvalidEvent } from 'react';
 
-export const Post = ({ author, publishedAt, content }) => {
+interface Author {
+  name: string;
+  role: string;
+  avatarUrl: string
+}
+
+interface Content {
+  type: 'paragraph' | 'link';
+  content: string
+}
+
+interface PostProps {
+  author: Author;
+  publishedAt: Date;
+  content: Content[];
+}
+
+export const Post = ({ author, publishedAt, content }: PostProps)=> {
 
   const [comments, setComments] = useState([
     'Post muito bacana, hein?',
@@ -19,19 +36,19 @@ export const Post = ({ author, publishedAt, content }) => {
     addSuffix: true
   })
 
-  const newCommentChange = (event) => {
-    setNewCommentText(event.target.setCustomValidity(''))
+  const newCommentChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+
+    event.target.setCustomValidity('')
     setNewCommentText(event.target.value);
   }
 
-  const handleCreateNewComment = (event) => {
+  const handleCreateNewComment = (event: FormEvent) => {
     event.preventDefault()
     setComments([...comments, newCommentText])
     setNewCommentText('');
   }
 
-  const deletComment = (commentToDelet) => {
-
+  const deletComment = (commentToDelet: string) => {
 
     const commentWithoutDeletedOne = comments.filter((comment) => {
       return comment !== commentToDelet;
@@ -40,12 +57,12 @@ export const Post = ({ author, publishedAt, content }) => {
     setComments(commentWithoutDeletedOne);
   }
 
-  const handleNewCommentInvalid = () => {
-    setNewCommentText(event.target.setCustomValidity('Esté campo é obrigatório!'))
+  const handleNewCommentInvalid = (event: InvalidEvent<HTMLTextAreaElement>) => {
+    event.target.setCustomValidity('Esté campo é obrigatório!')
   }
 
   const isNewCommentEmpty = newCommentText.length === 0;
-  
+
   return (
     <article className={styles.post}>
       <header>
