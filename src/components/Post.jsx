@@ -2,29 +2,25 @@ import styles from '../styles/Post.module.css';
 import { Avatar } from './Avatar';
 import { Coment } from './Coment';
 
-import { format, formatDistanceToNow} from 'date-fns';
+import {formatDistanceToNow} from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR'
 import { useState } from 'react';
 
 export const Post = ({ author, publishedAt, content }) => {
 
-  const formatoDate = format(publishedAt, "d 'de' LLL 'as' HH:mm'h'", {
-    locale: ptBR,
-  })
+  const [comments, setComments] = useState([
+    'Post muito bacana, hein?',
+  ]);
+
+  const [newCommentText, setNewCommentText] = useState('');
 
   const publishedDateRelativeToNow = formatDistanceToNow(publishedAt, {
     locale: ptBR,
     addSuffix: true
   })
 
-  const [comments, setComments] = useState([
-    'Post muito bacana, hein?',
-  ])
-
-  const [newCommentText, setNewCommentText] = useState('')
-
-
   const newCommentChange = (event) => {
+    setNewCommentText(event.target.setCustomValidity(''))
     setNewCommentText(event.target.value);
   }
 
@@ -34,8 +30,22 @@ export const Post = ({ author, publishedAt, content }) => {
     setNewCommentText('');
   }
 
+  const deletComment = (commentToDelet) => {
 
 
+    const commentWithoutDeletedOne = comments.filter((comment) => {
+      return comment !== commentToDelet;
+    })
+
+    setComments(commentWithoutDeletedOne);
+  }
+
+  const handleNewCommentInvalid = () => {
+    setNewCommentText(event.target.setCustomValidity('Esté campo é obrigatório!'))
+  }
+
+  const isNewCommentEmpty = newCommentText.length === 0;
+  
   return (
     <article className={styles.post}>
       <header>
@@ -67,16 +77,22 @@ export const Post = ({ author, publishedAt, content }) => {
           value={newCommentText}
           onChange={newCommentChange}
           placeholder='Deixe um comentário'
+          onInvalid={handleNewCommentInvalid}
+          required
         />
         <footer>
-          <button type='submit'>Publicar</button>
+          <button disabled={isNewCommentEmpty} type='submit'>Publicar</button>
         </footer>
       </form>
 
       <div className={styles.comentList}>
         {comments.map((coment) => {
           return (
-            <Coment key={coment} content={ coment } />
+            <Coment
+              key={coment}
+              content={coment}
+              onDeletComment={deletComment}
+            />
           )
         })}
       </div>
